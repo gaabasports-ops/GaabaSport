@@ -1,0 +1,12 @@
+
+(function(){
+  const nav=document.querySelector('.glass-nav');
+  const onScroll=()=>nav&&nav.classList.toggle('scrolled',window.scrollY>40); onScroll(); window.addEventListener('scroll',onScroll);
+  document.getElementById('year')?.append(new Date().getFullYear());
+  const slides=[...document.querySelectorAll('.hero-slide')]; const dotsWrap=document.querySelector('.hero-dots'); let idx=0,timer;
+  function show(i){ if(!slides.length)return; slides[idx].classList.remove('active'); dotsWrap?.children[idx]?.classList.remove('active'); idx=(i+slides.length)%slides.length; slides[idx].classList.add('active'); dotsWrap?.children[idx]?.classList.add('active'); }
+  if(slides.length){ slides.forEach((_,i)=>{const b=document.createElement('button'); b.setAttribute('aria-label','Go to slide '+(i+1)); b.addEventListener('click',()=>{show(i); restart();}); dotsWrap.appendChild(b)}); dotsWrap.children[0].classList.add('active'); const restart=()=>{clearInterval(timer); timer=setInterval(()=>show(idx+1),6500)}; document.querySelector('.hero-arrow.next')?.addEventListener('click',()=>{show(idx+1);restart()}); document.querySelector('.hero-arrow.prev')?.addEventListener('click',()=>{show(idx-1);restart()}); restart(); }
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in-view')}),{threshold:.14}); document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+  const counterObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{ if(!entry.isIntersecting)return; const el=entry.target; const target=+el.dataset.count; let n=0; const step=Math.max(1,Math.ceil(target/45)); const run=setInterval(()=>{n+=step; if(n>=target){n=target; clearInterval(run)} el.textContent=n+(target>=100?'+':'')},28); counterObserver.unobserve(el); }),{threshold:.6}); document.querySelectorAll('.counter').forEach(el=>counterObserver.observe(el));
+  document.getElementById('inquiryForm')?.addEventListener('submit',function(e){ e.preventDefault(); const d=new FormData(this); const msg=`Hi Gaaba Sport, I want to send a wholesale inquiry.%0A%0AName: ${encodeURIComponent(d.get('name')||'')}%0ACompany: ${encodeURIComponent(d.get('company')||'')}%0AEmail: ${encodeURIComponent(d.get('email')||'')}%0ACountry: ${encodeURIComponent(d.get('country')||'')}%0AProduct: ${encodeURIComponent(d.get('product')||'')}%0AMessage: ${encodeURIComponent(d.get('message')||'')}`; window.open('https://wa.me/923002021742?text='+msg,'_blank','noopener'); });
+})();
